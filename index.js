@@ -1,19 +1,38 @@
+const express = require('express')
+const app = express()
+const port = process.env.PORT || 4040;
+const cors = require('cors')
 const Nightmare = require('nightmare');
-const nightmare = Nightmare({ show: false });
 
-const URL = 'http://blog.oscarmorrison.com/nightmarejs-on-heroku-the-ultimate-scraping-setup/';
-console.log('Welcome to Nightmare scrape\n==========');
+const expressValidator = require('express-validator')
 
-nightmare
-    .goto(URL)
-    .wait('.post-title')
-    .evaluate(() => document.querySelector('.post-title').textContent)
+
+// allow cross origin sharing
+app.use(cors())
+
+app.get('/getstats/:url', (req, res) => {
+  const nightmare = Nightmare({ show: false });
+  nightmare
+    .goto(`http://${req.params.url}`)
+    .evaluate( () => {
+      return {  navStart: window.performance.timing.navigationStart,
+                loadEventEnd: window.performance.timing.loadEventEnd,
+                requestStart: window.performance.timing.requestStart,
+                responseStart: window.performance.timing.responseStart,
+                pageSize: window.performance.memory.usedJSHeapSize
+              }
+    })
     .end()
-    .then((result) => {
-        console.log(result);
-        console.log('=========\nAll done');
+    .then( data => {
+      console.log(`data returned: ${data.pageSize}`)
+      res.status(200).json(data)
     })
-    .catch((error) => {
-        console.error('an error has occurred: ' + error);
-    })
-    .then(() => (console.log('process exit'), process.exit()));
+    .catch( e => {
+      console.error('Search failed:', e);
+    });
+  console.log(`url analyzed: ${req.params.url} ...`)
+});
+
+app.listen(port, () => {
+  console.log(`Listening on port ${port}`)
+});
