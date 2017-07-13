@@ -1,14 +1,16 @@
-const express = require('express')
-const app = express()
+const express = require('express');
+const app = express();
 const port = process.env.PORT || 4040;
-const cors = require('cors')
+const cors = require('cors');
+const bodyParser = require('body-parser');
 const Nightmare = require('nightmare');
-
 const expressValidator = require('express-validator')
-
 
 // allow cross origin sharing
 app.use(cors())
+
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
 
 app.get('/getstats/:url', (req, res) => {
   const nightmare = Nightmare({ show: false });
