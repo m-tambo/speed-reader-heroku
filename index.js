@@ -4,13 +4,26 @@ const port = process.env.PORT || 4040;
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const Nightmare = require('nightmare');
-const expressValidator = require('express-validator')
+const expressValidator = require('express-validator');
 
 // allow cross origin sharing
-app.use(cors())
+app.use(cors());
 
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.get('/getscreenshot/:url', (req, res) => {
+  const nightmare = Nightmare({ show: false });
+  nightmare
+    .goto(`http://${req.params.url}`)
+    .screenshot()
+    .end()
+    .then((buf) => res.status(200).send(buf))
+    .catch( e => {
+      console.error('Unable to retrieve screenshot:', e);
+    });
+  console.log(`Screenshot taken from: ${req.params.url} ...`)
+});
 
 app.get('/getstats/:url', (req, res) => {
   const nightmare = Nightmare({ show: false });
