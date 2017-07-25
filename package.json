@@ -25,6 +25,7 @@
     "electron": "^1.6.10",
     "express": "^4.15.3",
     "express-validator": "^3.2.1",
+    "http": "0.0.0",
     "nightmare": "^2.10.0"
   }
 }

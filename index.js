@@ -5,6 +5,9 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const Nightmare = require('nightmare');
 const expressValidator = require('express-validator');
+const keepServerAwake = require('./keepServerAwake.js')
+
+keepServerAwake()
 
 // allow cross origin sharing
 app.use(cors());
